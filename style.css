@@ -1,0 +1,339 @@
+/**
+  Нормализация блочной модели
+ */
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+/**
+  Убираем внутренние отступы слева тегам списков,
+  у которых есть атрибут class
+ */
+:where(ul, ol):where([class]) {
+  padding-left: 0;
+}
+
+/**
+  Убираем внешние отступы body и двум другим тегам,
+  у которых есть атрибут class
+ */
+body,
+:where(blockquote, figure):where([class]) {
+  margin: 0;
+}
+
+/**
+  Убираем внешние отступы вертикали нужным тегам,
+  у которых есть атрибут class
+ */
+:where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl):where([class]) {
+  margin-block: 0;
+}
+
+:where(dd[class]) {
+  margin-left: 0;
+}
+
+:where(fieldset[class]) {
+  margin-left: 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+  Убираем стандартный маркер маркированному списку,
+  у которого есть атрибут class
+ */
+:where(ul[class]) {
+  list-style: none;
+}
+
+:where(address[class]) {
+  font-style: normal;
+}
+
+/**
+  Обнуляем вертикальные внешние отступы параграфа,
+  объявляем локальную переменную для внешнего отступа вниз,
+  чтобы избежать взаимодействие с более сложным селектором
+ */
+p {
+  --paragraphMarginBottom: 24px;
+
+  margin-block: 0;
+}
+
+/**
+  Внешний отступ вниз для параграфа без атрибута class,
+  который расположен не последним среди своих соседних элементов
+ */
+p:where(:not([class]):not(:last-child)) {
+  margin-bottom: var(--paragraphMarginBottom);
+}
+
+/**
+  Упрощаем работу с изображениями
+ */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/**
+  Наследуем свойства шрифт для полей ввода
+ */
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+html {
+  /**
+    Пригодится в большинстве ситуаций
+    (когда, например, нужно будет "прижать" футер к низу сайта)
+   */
+  height: 100%;
+  /**
+    Убираем скачок интерфейса по горизонтали
+    при появлении / исчезновении скроллбара
+   */
+  scrollbar-gutter: stable;
+}
+
+/**
+  Плавный скролл
+ */
+html,
+:has(:target) {
+  scroll-behavior: smooth;
+}
+
+body {
+  /**
+    Пригодится в большинстве ситуаций
+    (когда, например, нужно будет "прижать" футер к низу сайта)
+   */
+  min-height: 100%;
+  /**
+    Унифицированный интерлиньяж
+   */
+  line-height: 1.5;
+}
+
+/**
+  Нормализация высоты элемента ссылки при его инспектировании в DevTools
+ */
+a:where([class]) {
+  display: inline-flex;
+}
+
+/**
+  Курсор-рука при наведении на элемент
+ */
+button,
+label {
+  cursor: pointer;
+}
+
+/**
+  Приводим к единому цвету svg-элементы
+ */
+[fill] {
+  fill: currentColor;
+}
+
+[stroke] {
+  stroke: currentColor;
+}
+
+/**
+  Чиним баг задержки смены цвета при взаимодействии с svg-элементами
+ */
+svg * {
+  transition-property: fill, stroke;
+}
+
+/**
+  Удаляем все анимации и переходы для людей,
+  которые предпочитают их не использовать
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  border: 0 !important;
+  padding: 0 !important;
+  white-space: nowrap !important;
+  clip-path: inset(100%) !important;
+  clip: rect(0 0 0 0) !important;
+  overflow: hidden !important;
+}
+
+body {
+  background: radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(148, 187, 233, 1) 100%);
+}
+
+.input-file {
+  display: none;
+}
+
+.input-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 50px;
+  padding: 10px;
+
+  border: 1px solid black;
+  font-size: 18px;
+
+  background: radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(148, 187, 233, 1) 100%);
+}
+
+.input-label:hover {
+  color: white;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+  
+  gap: 30px;
+  margin: 20px;
+}
+
+.pagination-select {
+  width: 100px;
+}
+
+.btn-pagination {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+
+  background: transparent;
+  border: none;
+}
+
+.btn-pagination:hover{
+  scale: 1.5;
+  color: red;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 10%;
+  align-items: center;
+}
+
+.movies-list {
+  display: flex;
+  flex-direction: column;
+  row-gap: 25px;
+
+  margin: 20px 0;
+
+  width: 50%;
+}
+
+.movie-item {
+  display: flex;
+
+  padding: 20px 20px;
+  font-size: 20px;
+
+  border-radius: 10px;
+
+  background-color: white;
+
+  box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 2px 3px 21px 10px rgba(0,0,0,0.75);
+  -moz-box-shadow: 2px 3px 21px 10px rgba(0,0,0,0.75);
+}
+
+.movie-poster {
+  height: 150px;
+}
+
+.movie-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+  width: 100%;
+  height: inherit;
+  padding-left: 20px;
+}
+
+.additional-info {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.imdb-rating-icon {
+  color: rgb(245, 197, 24);
+  stroke: black;
+}
+
+.rating-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ratings-info {
+  display: flex;
+  gap: 50px;
+}
+
+.user-rating-icon {
+  color: rgb(14, 99, 190);
+  stroke: black;
+}
+
+.svg-map path {
+  fill: inherit;
+  stroke: white;
+}
+
+.svg-map path:hover {
+  fill: red;
+}
+
+.map {
+  width: 50%;
+}
+
+.tooltip {
+  display: none;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+}
