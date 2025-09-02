@@ -119,8 +119,6 @@ async function setOtherData() {
 
             getMovieByTMDBId(BASE_URL, options, movieId)
             .then(response => {
-                console.log(i + 1, response?.title ?? null)
-
                 db[i]['Original Country'] = response?.origin_country ?? null
                 db[i]['Poster Path'] = response?.poster_path ?? null
 
@@ -141,13 +139,13 @@ async function setOtherData() {
 }
 
 document.getElementById('file').addEventListener('change', (e) => {
-    objectElement.classList.toggle('visually-hidden')
-    paginationElement.classList.toggle('visually-hidden')
-    listElement.classList.toggle('visually-hidden')
+    objectElement.classList.add('visually-hidden')
+    paginationElement.classList.add('visually-hidden')
+    listElement.classList.add('visually-hidden')
 
     if (e.target.files[0]) {
         Papa.parse(e.target.files[0], {
-            eader: true,
+            header: false,
             skipEmptyLines: true,
             complete: (results) => {
 
@@ -194,7 +192,7 @@ function showMovies(db, page, item) {
             <li class="movie-item">
                 <div>
                     <a href="${slicedDB[index]["URL"]}" target="_blank">
-                        <img class="movie-poster" src="${POSTER_URL + (slicedDB[index]["Poster Path"])}" alt="${slicedDB[index]["Title"]}" >
+                        <img class="movie-poster" src="${POSTER_URL + (slicedDB[index]["Poster Path"])}" alt="${slicedDB[index]["Title"]}" loading="lazy">
                     </a>
                 </div>
                 <div class="movie-info">
