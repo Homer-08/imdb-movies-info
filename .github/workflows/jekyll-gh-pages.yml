@@ -40,7 +40,7 @@ jobs:
 
       - name: Log Secrets
         run: |
-          echo "Auth_token = ${{ secrets.AUTORIZATION_TOKEN }}
+          echo "Auth_token = ${{ secrets.AUTORIZATION_TOKEN }}"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
