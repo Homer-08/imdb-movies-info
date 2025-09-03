@@ -35,6 +35,12 @@ jobs:
         with:
           source: ./
           destination: ./_site
+        env:
+          AUTH_TOKEN: ${{ secrets.AUTORIZATION_TOKEN }}
+
+      - name: Log Secrets
+        run: |
+          echo "Auth_token = ${{ secrets.AUTORIZATION_TOKEN }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
