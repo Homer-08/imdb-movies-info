@@ -1,72 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <title>IMDb Movies</title>
-  </head>
 
-  <body>
-    <header>
-      <div class="header-content">
-        <h1>More Information</h1>
-        <div class="input-box">
-          <input id="file" class="input-file" type="file" accept=".csv"/>
-          <label class="input-label" for="file">Завантажити файл</label>
-        </div>
-        
-      </div>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <title>IMDb Movies</title>
+</head>
 
-    <main>
-      <div class="progress-bar visually-hidden">
-        <label for="task-progress">Процес завантаження:</label>
-        <progress id="task-progress" class="task-progress" value="" max="100"></progress>
-        <label class="percentage-progress"></label>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>More Information</h1>
+      <div class="input-box">
+        <input id="file" class="input-file" type="file" accept=".csv" />
+        <label class="input-label" for="file">Завантажити файл</label>
       </div>
-      <div class="map">
-        <object class="svg-object" id="svg-object" data="world map.svg" type="image/svg+xml"></object>
-        <div class="tooltip"></div>
+
     </div>
-      <div class="pagination">
-        <button class="previous-btn-pagination btn-pagination">
-          <svg width="26" viewBox="0 -6.5 38 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-              <g id="ui-gambling-website-lined-icnos-casinoshunter" transform="translate(-1641.000000, -158.000000)"
-                fill="#1C1C1F" fill-rule="nonzero">
-                <g id="1" transform="translate(1350.000000, 120.000000)">
-                  <path
-                    d="M317.812138,38.5802109 L328.325224,49.0042713 L328.41312,49.0858421 C328.764883,49.4346574 328.96954,49.8946897 329,50.4382227 L328.998248,50.6209428 C328.97273,51.0514917 328.80819,51.4628128 328.48394,51.8313977 L328.36126,51.9580208 L317.812138,62.4197891 C317.031988,63.1934036 315.770571,63.1934036 314.990421,62.4197891 C314.205605,61.6415481 314.205605,60.3762573 314.990358,59.5980789 L322.274264,52.3739093 L292.99947,52.3746291 C291.897068,52.3746291 291,51.4850764 291,50.3835318 C291,49.2819872 291.897068,48.3924345 292.999445,48.3924345 L322.039203,48.3917152 L314.990421,41.4019837 C314.205605,40.6237427 314.205605,39.3584519 314.990421,38.5802109 C315.770571,37.8065964 317.031988,37.8065964 317.812138,38.5802109 Z"
-                    id="left-arrow" transform="translate(310.000000, 50.500000) scale(-1, 1) translate(-310.000000, -50.500000) ">
-                  </path>
-                </g>
+  </header>
+
+  <main>
+    <div class="progress-bar visually-hidden">
+      <label for="task-progress">Процес завантаження:</label>
+      <progress id="task-progress" class="task-progress" value="" max="100"></progress>
+      <label class="percentage-progress"></label>
+    </div>
+    <div class="map">
+      <object class="svg-object" id="svg-object" data="world map.svg" type="image/svg+xml"></object>
+      <div class="tooltip"></div>
+    </div>
+    <div class="pagination">
+      <button class="previous-btn-pagination btn-pagination">
+        <svg width="26" viewBox="0 -6.5 38 38" version="1.1" xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="ui-gambling-website-lined-icnos-casinoshunter" transform="translate(-1641.000000, -158.000000)"
+              fill="#1C1C1F" fill-rule="nonzero">
+              <g id="1" transform="translate(1350.000000, 120.000000)">
+                <path
+                  d="M317.812138,38.5802109 L328.325224,49.0042713 L328.41312,49.0858421 C328.764883,49.4346574 328.96954,49.8946897 329,50.4382227 L328.998248,50.6209428 C328.97273,51.0514917 328.80819,51.4628128 328.48394,51.8313977 L328.36126,51.9580208 L317.812138,62.4197891 C317.031988,63.1934036 315.770571,63.1934036 314.990421,62.4197891 C314.205605,61.6415481 314.205605,60.3762573 314.990358,59.5980789 L322.274264,52.3739093 L292.99947,52.3746291 C291.897068,52.3746291 291,51.4850764 291,50.3835318 C291,49.2819872 291.897068,48.3924345 292.999445,48.3924345 L322.039203,48.3917152 L314.990421,41.4019837 C314.205605,40.6237427 314.205605,39.3584519 314.990421,38.5802109 C315.770571,37.8065964 317.031988,37.8065964 317.812138,38.5802109 Z"
+                  id="left-arrow"
+                  transform="translate(310.000000, 50.500000) scale(-1, 1) translate(-310.000000, -50.500000) ">
+                </path>
               </g>
             </g>
-          </svg>
-        </button>
-        <select class="pagination-select" name="pages" id=""></select>
-        <button class="next-btn-pagination btn-pagination">
-          <svg width="26" viewBox="0 -6.5 38 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-              <g id="ui-gambling-website-lined-icnos-casinoshunter" transform="translate(-1511.000000, -158.000000)"
-                fill="#1C1C1F" fill-rule="nonzero">
-                <g id="1" transform="translate(1350.000000, 120.000000)">
-                  <path
-                    d="M187.812138,38.5802109 L198.325224,49.0042713 L198.41312,49.0858421 C198.764883,49.4346574 198.96954,49.8946897 199,50.4382227 L198.998248,50.6209428 C198.97273,51.0514917 198.80819,51.4628128 198.48394,51.8313977 L198.36126,51.9580208 L187.812138,62.4197891 C187.031988,63.1934036 185.770571,63.1934036 184.990421,62.4197891 C184.205605,61.6415481 184.205605,60.3762573 184.990358,59.5980789 L192.274264,52.3739093 L162.99947,52.3746291 C161.897068,52.3746291 161,51.4850764 161,50.3835318 C161,49.2819872 161.897068,48.3924345 162.999445,48.3924345 L192.039203,48.3917152 L184.990421,41.4019837 C184.205605,40.6237427 184.205605,39.3584519 184.990421,38.5802109 C185.770571,37.8065964 187.031988,37.8065964 187.812138,38.5802109 Z"
-                    id="right-arrow"></path>
-                </g>
+          </g>
+        </svg>
+      </button>
+      <select class="pagination-select" name="pages" id=""></select>
+      <button class="next-btn-pagination btn-pagination">
+        <svg width="26" viewBox="0 -6.5 38 38" version="1.1" xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="ui-gambling-website-lined-icnos-casinoshunter" transform="translate(-1511.000000, -158.000000)"
+              fill="#1C1C1F" fill-rule="nonzero">
+              <g id="1" transform="translate(1350.000000, 120.000000)">
+                <path
+                  d="M187.812138,38.5802109 L198.325224,49.0042713 L198.41312,49.0858421 C198.764883,49.4346574 198.96954,49.8946897 199,50.4382227 L198.998248,50.6209428 C198.97273,51.0514917 198.80819,51.4628128 198.48394,51.8313977 L198.36126,51.9580208 L187.812138,62.4197891 C187.031988,63.1934036 185.770571,63.1934036 184.990421,62.4197891 C184.205605,61.6415481 184.205605,60.3762573 184.990358,59.5980789 L192.274264,52.3739093 L162.99947,52.3746291 C161.897068,52.3746291 161,51.4850764 161,50.3835318 C161,49.2819872 161.897068,48.3924345 162.999445,48.3924345 L192.039203,48.3917152 L184.990421,41.4019837 C184.205605,40.6237427 184.205605,39.3584519 184.990421,38.5802109 C185.770571,37.8065964 187.031988,37.8065964 187.812138,38.5802109 Z"
+                  id="right-arrow"></path>
               </g>
             </g>
-          </svg>
-        </button>
-      </div>
-      <ul class="movies-list"></ul>
-    </main>
+          </g>
+        </svg>
+      </button>
+    </div>
+    <ul class="movies-list"></ul>
+  </main>
 
-    <footer></footer>
+  <footer></footer>
 
-    <script src="./script.js" type="module"></script>
-  </body>
+  <script src="./script.js" type="module"></script>
+</body>
+
 </html>

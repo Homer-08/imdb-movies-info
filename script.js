@@ -3,7 +3,7 @@ const options = {
     headers: {
         accept: 'application/json',
         Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Yjg1NWM0ZGUwZDg3MzYxOTkzZjczYmVlNWIzMGMzNiIsIm5iZiI6MTcyOTUzMTcxNC42NzcyOSwic3ViIjoiNjcxMGYwZDYxZjlkMGVlNGI4YzllYTMwIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.B-0Ue9v9UQ4kbigfTjXip-bf_QEs65E-Dm1yhe6o6Gg`
-  }
+    }
 }
 
 const BASE_URL = 'https://api.themoviedb.org/3'
@@ -18,7 +18,7 @@ const objectElement = document.querySelector('.svg-object')
 const paginationElement = document.querySelector('.pagination')
 const proggressElement = document.querySelector('.task-progress')
 const proggressDivElement = document.querySelector('.progress-bar')
-const percentagepProgressElement = document.querySelector('.percentage-progress')
+const percentageProgressElement = document.querySelector('.percentage-progress')
 const labelElement = document.querySelector('.input-label')
 
 const numberOfItems = 100
@@ -26,7 +26,7 @@ let numberOfPages = Math.ceil(updatedMoviesDB?.length / numberOfItems)
 
 const countriesForMap = {}
 
-if(updatedMoviesDB) {
+if (updatedMoviesDB) {
     setOptions()
     showMovies(updatedMoviesDB, 1, numberOfItems)
     labelElement.innerHTML = `Оновити файл`
@@ -35,6 +35,10 @@ else {
     objectElement.classList.toggle('visually-hidden')
     paginationElement.classList.toggle('visually-hidden')
 }
+
+const lastMoviesListElement = document.querySelector('.movies-list')
+
+setObserver(lastMoviesListElement.lastElementChild)
 
 document.querySelector('.previous-btn-pagination').addEventListener('click', (e) => {
     if (selectElement.selectedIndex === 0) {
@@ -58,6 +62,8 @@ document.querySelector('[name = "pages"]').addEventListener('change', (e) => {
     let numberOfPage = e.target.value
 
     showMovies(updatedMoviesDB, numberOfPage, numberOfItems)
+
+    setObserver(lastMoviesListElement.lastElementChild)
 })
 
 function setOptions() {
@@ -76,11 +82,10 @@ async function getMovieByIMDBsId(url, opt, IMDBsId) {
         const response = await fetch(urlWithId, opt)
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`)
         }
 
-        const data = await response.json()
-        return data;
+        return response.json()
 
     } catch (error) {
         console.error('Fetch error:', error)
@@ -97,45 +102,38 @@ async function getMovieByTMDBId(url, opt, TMDBid) {
             throw new Error(`HTTP error! status: ${response.status}`)
         }
 
-        const data = await response.json()
-        return data;
+        return response.json()
 
     } catch (error) {
         console.error('Fetch error:', error)
     }
 }
 
-async function setOtherData() {
-    const db = JSON.parse(localStorage.getItem('db'))
-    let arrayForMovies = []
+async function setOtherData(opt, db) {
+    const arrayForMovies = []
 
     proggressDivElement.classList.toggle('visually-hidden')
 
     for (let i = 0; i < db.length; i++) {
 
-        await getMovieByIMDBsId(BASE_URL, options, db[i].Const)
-        .then(({movie_results, tv_results}) => {
-            const movieId = movie_results[0]?.id ?? tv_results[0]?.id ?? null
+        const movieByIMDbId = await getMovieByIMDBsId(BASE_URL, opt, db[i].Const)
+        const movieTMDBId = movieByIMDbId.movie_results[0]?.id ?? movieByIMDbId.tv_results[0]?.id ?? null
+        const movieByTMDBId = await getMovieByTMDBId(BASE_URL, opt, movieTMDBId)
 
-            getMovieByTMDBId(BASE_URL, options, movieId)
-            .then(response => {
-                db[i]['Original Country'] = response?.origin_country ?? null
-                db[i]['Poster Path'] = response?.poster_path ?? null
+        db[i]['Original Country'] = movieByTMDBId?.origin_country ?? null
+        db[i]['Poster Path'] = movieByTMDBId?.poster_path ?? null
 
-                arrayForMovies.push(db[i])
+        arrayForMovies.push(db[i])
 
-                proggressElement.value = arrayForMovies.length
-                percentagepProgressElement.innerHTML = `${((arrayForMovies.length / db.length) * 100).toFixed(2)} %`
-            })
-        })
+        proggressElement.value = arrayForMovies.length
+        percentageProgressElement.innerHTML = `${((arrayForMovies.length / db.length) * 100).toFixed(2)} %`
     }
 
     setTimeout(() => {
         localStorage.setItem('updatedDB', JSON.stringify(arrayForMovies))
         proggressDivElement.classList.toggle('visually-hidden')
-        document.location.reload();
+        document.location.reload()
     }, 1000)
-    
 }
 
 document.getElementById('file').addEventListener('change', (e) => {
@@ -149,32 +147,32 @@ document.getElementById('file').addEventListener('change', (e) => {
             skipEmptyLines: true,
             complete: (results) => {
 
-                let jsonObj = [];
+                const jsonObj = []
                 let headers = results.data[0]
                 headers.push('Original Country')
                 headers.push('Poster Path')
 
                 for (let i = 1; i < results.data.length; i++) {
-                    const data = results.data[i];
-                    let obj = {};
+                    const data = results.data[i]
+                    let obj = {}
 
                     for (let j = 0; j < results.data[0].length - 1; j++) {
-                        obj[headers[j]] = data[j];
+                        obj[headers[j]] = data[j]
                         obj['Original Country'] = null
                         obj['Poster Path'] = null
                     }
 
-                    jsonObj.push(obj);
+                    jsonObj.push(obj)
                 }
 
                 localStorage.setItem('db', JSON.stringify(jsonObj))
 
                 proggressElement.max = jsonObj.length
 
-                setOtherData()
+                setOtherData(options, moviesDB)
             },
             error: function (error) {
-                console.error('Error parsing CSV:', error);
+                console.error('Error parsing CSV:', error)
             }
         })
     }
@@ -226,7 +224,7 @@ function showMovies(db, page, item) {
                 </div>
             </li>
         `
-        
+
         listElement.insertAdjacentHTML('beforeend', movieItem)
     }
 }
@@ -234,15 +232,15 @@ function showMovies(db, page, item) {
 if (updatedMoviesDB) {
     countCountries()
 
-    document.addEventListener("DOMContentLoaded", function () {
-        objectElement.addEventListener("load", function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        objectElement.addEventListener('load', function () {
             const svgDoc = objectElement.contentDocument
-            const svgElement = svgDoc.querySelector("svg")
-            const svgPathes = svgElement.querySelectorAll("path")
+            const svgElement = svgDoc.querySelector('svg')
+            const svgPathes = svgElement.querySelectorAll('path')
             const tooltip = document.querySelector('.tooltip')
 
             svgPathes.forEach(path => {
-                if (Boolean(countriesForMap[path.getAttribute("id")])) {
+                if (Boolean(countriesForMap[path.getAttribute('id')])) {
                     path.style.fill = 'red'
                     path.style.stroke = 'white'
                 }
@@ -251,22 +249,20 @@ if (updatedMoviesDB) {
             svgPathes.forEach(path => {
                 path.addEventListener('mouseenter', (event) => {
                     let amounOfMovies = countriesForMap[path.id]
-                    if (path.id === "RU") {
+                    if (path.id === 'RU') {
                         amounOfMovies += countriesForMap['SU']
                     }
                     if (amounOfMovies === undefined) {
                         amounOfMovies = 0
                     }
-                    tooltip.textContent = `${path.getAttribute("title")}: ${amounOfMovies} movies `
+                    tooltip.textContent = `${path.getAttribute('title')}: ${amounOfMovies} movies `
                     tooltip.style.display = 'block'
 
-                    // Установка позиции подсказки
                     tooltip.style.left = event.screenX - 100 + 'px'
                     tooltip.style.top = event.screenY - 75 + 'px'
                 })
 
                 path.addEventListener('mousemove', (event) => {
-                    // Установка позиции подсказки
                     tooltip.style.left = event.screenX - 100 + 'px'
                     tooltip.style.top = event.screenY - 75 + 'px'
                 })
@@ -291,7 +287,7 @@ function countCountries() {
                 else {
                     countriesForMap[element] += 1
                 }
-            });
+            })
         }
         else {
             if (countriesForMap[element['Original Country']] === undefined) {
@@ -302,4 +298,24 @@ function countCountries() {
             }
         }
     })
+}
+
+function setObserver(element) {
+    const optionstForObserver = {
+        rootMargin: '100px 0px -50px 0px',
+        threshold: [0, 0.5, 1]
+    }
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                listElement.after(paginationElement)
+            }
+            else {
+                listElement.before(paginationElement)
+            }
+        })
+    }, optionstForObserver)
+
+    observer.observe(element)
 }
