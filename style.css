@@ -321,10 +321,6 @@ main {
   stroke: white;
 }
 
-.svg-map path:hover {
-  fill: red;
-}
-
 .map {
   width: 50%;
 }

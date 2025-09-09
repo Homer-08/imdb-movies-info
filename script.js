@@ -58,7 +58,7 @@ document.querySelector('.next-btn-pagination').addEventListener('click', (e) => 
     selectElement.dispatchEvent(new Event('change'))
 })
 
-document.querySelector('[name = "pages"]').addEventListener('change', (e) => {
+selectElement.addEventListener('change', (e) => {
     let numberOfPage = e.target.value
 
     showMovies(updatedMoviesDB, numberOfPage, numberOfItems)
@@ -114,7 +114,7 @@ async function setOtherData(opt, db) {
 
     proggressDivElement.classList.toggle('visually-hidden')
 
-    for (let i = 0; i < db.length; i++) {
+    for (let i = 0; i < db?.length; i++) {
 
         const movieByIMDbId = await getMovieByIMDBsId(BASE_URL, opt, db[i].Const)
         const movieTMDBId = movieByIMDbId.movie_results[0]?.id ?? movieByIMDbId.tv_results[0]?.id ?? null
@@ -178,55 +178,76 @@ document.getElementById('file').addEventListener('change', (e) => {
     }
 })
 
-function showMovies(db, page, item) {
+function showMovies(db, page = 1, item, option = 0, ...args) {
     listElement.innerHTML = ''
 
-    const slicedDB = db.filter((element, index) => {
-        return index >= (page - 1) * item && index < ((page - 1) * item) + item
-    })
+    let slicedDB = null
+
+    switch(option) {
+        case 0:
+            slicedDB = db.filter((element, index) => {
+                return index >= (page - 1) * item && index < ((page - 1) * item) + item
+            })
+            break
+        case 1:
+             slicedDB = db.filter((element) => {
+                if(element['Original Country']?.includes('SU'))
+                {
+                    if (args[0] === 'RU')
+                        return element
+                }
+
+                return element['Original Country']?.includes(args[0]) === true
+            })
+            break
+    }
 
     for (let index = 0; index < slicedDB.length; index++) {
-        let movieItem = `
+        let movieItem = getMovieCard(slicedDB, index, page, item)
+
+        listElement.insertAdjacentHTML('beforeend', movieItem)
+    }
+}
+
+function getMovieCard(db, index, page, item) {
+    return `
             <li class="movie-item">
                 <div>
-                    <a href="${slicedDB[index]["URL"]}" target="_blank">
-                        <img class="movie-poster" src="${POSTER_URL + (slicedDB[index]["Poster Path"])}" alt="${slicedDB[index]["Title"]}" loading="lazy">
+                    <a href="${db[index]["URL"]}" target="_blank">
+                        <img class="movie-poster" src="${POSTER_URL + (db[index]["Poster Path"])}" alt="${db[index]["Title"]}" loading="lazy">
                     </a>
                 </div>
                 <div class="movie-info">
                     <div class="rate-info">
                         <span class="movie-rate">Оцінений: 
-                            <time datetime="${slicedDB[index]["Date Rated"]}">${slicedDB[index]["Date Rated"]}</time>
+                            <time datetime="${db[index]["Date Rated"]}">${db[index]["Date Rated"]}</time>
                         </span>
                     </div>
                     <div class="title-info">
-                        <h2 class="movie-title">${(index + 1 + ((page - 1) * item))}. ${slicedDB[index]["Title"]} (${slicedDB[index]["Original Title"]})</h2>
+                        <h2 class="movie-title">${(index + 1 + ((page - 1) * item))}. ${db[index]["Title"]} (${db[index]["Original Title"]})</h2>
                     </div>
                     <div class="additional-info">
-                        <span class="year-info">${slicedDB[index]["Year"]} рік</span>
-                        <span class="runtime-info">${slicedDB[index]["Runtime (mins)"]} хв</span>
-                        <span class="title-type-info">${slicedDB[index]["Title Type"]}</span>
+                        <span class="year-info">${db[index]["Year"]} рік</span>
+                        <span class="runtime-info">${db[index]["Runtime (mins)"]} хв</span>
+                        <span class="title-type-info">${db[index]["Title Type"]}</span>
                     </div>
                     <div class="ratings-info">
                         <span class="rating-info">
                             <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" class="imdb-rating-icon" viewBox="0 0 24 24" fill="currentColor" role="presentation">
                                 <path d="M12 20.1l5.82 3.682c1.066.675 2.37-.322 2.09-1.584l-1.543-6.926 5.146-4.667c.94-.85.435-2.465-.799-2.567l-6.773-.602L13.29.89a1.38 1.38 0 0 0-2.581 0l-2.65 6.53-6.774.602C.052 8.126-.453 9.74.486 10.59l5.147 4.666-1.542 6.926c-.28 1.262 1.023 2.26 2.09 1.585L12 20.099z"></path>
                             </svg>
-                            <span>${slicedDB[index]["IMDb Rating"]} (${slicedDB[index]["Num Votes"]})</span>
+                            <span>${db[index]["IMDb Rating"]} (${db[index]["Num Votes"]})</span>
                         </span>
                         <span class="rating-info">
                             <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" class="user-rating-icon" viewBox="0 0 24 24" fill="currentColor" role="presentation">
                                 <path d="M12 20.1l5.82 3.682c1.066.675 2.37-.322 2.09-1.584l-1.543-6.926 5.146-4.667c.94-.85.435-2.465-.799-2.567l-6.773-.602L13.29.89a1.38 1.38 0 0 0-2.581 0l-2.65 6.53-6.774.602C.052 8.126-.453 9.74.486 10.59l5.147 4.666-1.542 6.926c-.28 1.262 1.023 2.26 2.09 1.585L12 20.099z"></path>
                             </svg>
-                            <span>${slicedDB[index]["Your Rating"]}</span>
+                            <span>${db[index]["Your Rating"]}</span>
                         </span>
                     </div>
                 </div>
             </li>
         `
-
-        listElement.insertAdjacentHTML('beforeend', movieItem)
-    }
 }
 
 if (updatedMoviesDB) {
@@ -241,6 +262,7 @@ if (updatedMoviesDB) {
 
             svgPathes.forEach(path => {
                 if (Boolean(countriesForMap[path.getAttribute('id')])) {
+                    path.style.cursor = 'pointer'
                     path.style.fill = 'red'
                     path.style.stroke = 'white'
                 }
@@ -317,5 +339,22 @@ function setObserver(element) {
         })
     }, optionstForObserver)
 
-    observer.observe(element)
+    if (element)
+        observer.observe(element)
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    objectElement.addEventListener('load', () => {
+        objectElement.contentDocument.querySelector('svg').addEventListener('click', (event) => {
+            const colorOfFill = getComputedStyle(event.target).fill
+
+            if(event.target.nodeName === 'path') {
+                if (colorOfFill === 'rgb(255, 0, 0)') {
+                    paginationElement.classList.add('visually-hidden')
+                    showMovies(updatedMoviesDB, undefined ,numberOfItems, 1, event.target.id)
+                }
+            }
+        })
+    })
+})
+        
